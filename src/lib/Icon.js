@@ -1,6 +1,4 @@
-'use strict'
-
-var icns = require('./icns')
+import * as icns from './icns'
 
 class Icon {
 
@@ -45,4 +43,4 @@ getBestModernImage() {
 
 }
 
-module.exports = Icon
+export default Icon

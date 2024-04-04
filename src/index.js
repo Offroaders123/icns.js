@@ -1,7 +1,2 @@
-'use strict'
-
-var icns = require('./lib/icns')
-var Icon = require('./lib/Icon')
-
-module.exports = icns
-module.exports.Icon = Icon
+export * from './lib/icns'
+export { default as Icon } from './lib/Icon'

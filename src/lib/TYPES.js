@@ -1,12 +1,12 @@
-'use strict'
-
-var types = require('./types.json')
+import * as types from './types.json'
 
 /** @type {Record<string, string>} */
-module.exports = Object.fromEntries(
+const TYPES = Object.fromEntries(
   Object.keys(types)
     .map(type => [type.toUpperCase(), type])
 )
 
-module.exports.TOC = 'TOC '
-module.exports.ICNV = 'icnV'
+TYPES.TOC = 'TOC '
+TYPES.ICNV = 'icnV'
+
+export default TYPES

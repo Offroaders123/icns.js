@@ -30,5 +30,5 @@ function readTOC (buffer, offset, length) {
   return result
 }
 
-module.exports.readHeader = readHeader
-module.exports.readTOC = readTOC
+export { readHeader }
+export { readTOC }

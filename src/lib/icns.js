@@ -1,14 +1,12 @@
-'use strict'
-
 // references
 // * https://en.wikipedia.org/wiki/Apple_Icon_Image_format
 // * http://www.ezix.org/project/wiki/MacOSXIcons
 // * http://www.macdisk.com/maciconen.php
 // * http://icns.sourceforge.net/
 
-var TYPES = require('./TYPES.js')
-var types = require('./types.json')
-var helpers = require('./helpers')
+import TYPES from './TYPES.js'
+import * as types from './types.json'
+import * as helpers from './helpers'
 var readHeader = helpers.readHeader
 var readTOC = helpers.readTOC
 
@@ -107,7 +105,7 @@ function getTOC (buf) {
  * @param {Buffer} buf
  * @returns {boolean}
  */
-module.exports.isIcns = function isIcns (buf) {
+export function isIcns (buf) {
   return readHeader(buf, 0)[0] === MAGIC
 }
 
@@ -151,7 +149,7 @@ function getModernImages (buf) {
 }
 
 /**
- * @this {typeof module.exports}
+ * @this {typeof import('./icns.js')}
  * @param {Buffer} buf
  * @returns {[string, number, number] | null}
  */
@@ -180,7 +178,7 @@ function getBestModernImage (buf) {
 // function getData() {
 //
 // }
-// module.exports.getBest = function getBest (buf) {
+// export function getBest (buf) {
 //   // var TOC = getTOC(buf) || readResources(buf)
 //   var TOC = readResources(buf)
 //   // if (!TOC) {
@@ -189,19 +187,19 @@ function getBestModernImage (buf) {
 //   return TOC
 // }
 
-module.exports.getImages = getImages
-module.exports.getResources = getResources
-module.exports.readResources = readResources
-module.exports.getTOC = getTOC
-module.exports.getData = getData
-module.exports.getModernImages = getModernImages
-module.exports.getBestModernImage = getBestModernImage
+export { getImages }
+export { getResources }
+export { readResources }
+export { getTOC }
+export { getData }
+export { getModernImages }
+export { getBestModernImage }
 
 /**
  * @param {Buffer} buffer
  * @returns {{ icns: boolean; length: number; data: { type: string; length: number; offset: number; value?: [string, number][]; }[]; }}
  */
-module.exports.parse = function parse (buffer) {
+export function parse (buffer) {
   /** @type {{ icns: boolean; length: number; data: { type: string; length: number; offset: number; value?: [string, number][]; }[]; }} */
   var result = {}
   var header = readHeader(buffer, 0)
