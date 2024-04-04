@@ -2,9 +2,11 @@
 
 var types = require('./types.json')
 
-Object.keys(types).forEach(function (type) {
-  module.exports[type.toUpperCase()] = type
-})
+/** @type {Record<string, string>} */
+module.exports = Object.fromEntries(
+  Object.keys(types)
+    .map(type => [type.toUpperCase(), type])
+)
 
 module.exports.TOC = 'TOC '
 module.exports.ICNV = 'icnV'

@@ -17,9 +17,9 @@ Icon.prototype.getTOC = function () {
   return icns.getTOC(this.buffer)
 }
 
-Icon.prototype.getBest = function () {
-  return icns.getBest(this.buffer)
-}
+// Icon.prototype.getBest = function () {
+//   return icns.getBest(this.buffer)
+// }
 
 Icon.prototype.getResources = function () {
   return icns.getResources(this.buffer)

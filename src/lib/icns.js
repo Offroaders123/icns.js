@@ -159,7 +159,7 @@ function getBestModernImage (buf) {
   /** @type {[string, number, number] | null} */
   var best = null
   var resources = this.getImages(buf)
-  resources.forEach(function (resource, idx) {
+  resources.forEach(function (resource) {
     var type = types[resource[0]]
     if (!type.modern) return
     if (!best) best = resource
