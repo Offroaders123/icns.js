@@ -1,4 +1,4 @@
-import * as types from './types.json'
+import types from './types.json.js'
 
 /** @type {Record<string, string>} */
 const TYPES = Object.fromEntries(

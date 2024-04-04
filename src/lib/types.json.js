@@ -1,4 +1,9 @@
-{
+/**
+ * @typedef {{ length: number; size: number; OS: string; modern?: true; description: string; }} IcnsType
+ */
+
+/** @type {Record<string, IcnsType>} */
+export default {
   "ICON": {
     "length": 128,
     "size": 32,

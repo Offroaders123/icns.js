@@ -5,7 +5,7 @@
 // * http://icns.sourceforge.net/
 
 import TYPES from './TYPES.js'
-import * as types from './types.json'
+import types from './types.json.js'
 import { readHeader, readTOC } from './helpers.js'
 
 var MAGIC = 'icns'
@@ -147,14 +147,13 @@ export function getModernImages (buf) {
 }
 
 /**
- * @this {typeof import('./icns.js')}
  * @param {Buffer} buf
  * @returns {[string, number, number] | null}
  */
 export function getBestModernImage (buf) {
   /** @type {[string, number, number] | null} */
   var best = null
-  var resources = this.getImages(buf)
+  var resources = getImages(buf)
   resources.forEach(function (resource) {
     var type = types[resource[0]]
     if (!type.modern) return
