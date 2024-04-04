@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import * as icns from '../index'
-import * as fs from 'fs'
+import * as icns from '../index.js'
+import * as fs from 'node:fs'
 var path = process.argv.slice(2)[0]
 if (!path) throw new Error('path missing')
 

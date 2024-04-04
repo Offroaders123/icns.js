@@ -1,6 +1,6 @@
-import * as icns from './icns'
+import * as icns from './icns.js'
 
-class Icon {
+export default class Icon {
 
 /**
  * @param {Buffer} buffer
@@ -42,5 +42,3 @@ getBestModernImage() {
 }
 
 }
-
-export default Icon

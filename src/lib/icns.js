@@ -6,9 +6,7 @@
 
 import TYPES from './TYPES.js'
 import * as types from './types.json'
-import * as helpers from './helpers'
-var readHeader = helpers.readHeader
-var readTOC = helpers.readTOC
+import { readHeader, readTOC } from './helpers.js'
 
 var MAGIC = 'icns'
 
@@ -55,7 +53,7 @@ function readData (buf) {
  * @param {Buffer} buf
  * @returns {{ type: string; length: number; offset: number; }[]}
  */
-function readResources (buf) {
+export function readResources (buf) {
   var result = []
   var offset = 8
   while (offset < buf.length) {
@@ -70,7 +68,7 @@ function readResources (buf) {
  * @param {Buffer} buf
  * @returns {[string, number, number][]}
  */
-function getData (buf) {
+export function getData (buf) {
   /** @type {[string, number, number][]} */
   var result = []
   var offset = 8
@@ -86,7 +84,7 @@ function getData (buf) {
  * @param {Buffer} buf
  * @returns {[string, number, number][] | null}
  */
-function getTOC (buf) {
+export function getTOC (buf) {
   var header = readHeader(buf, 8)
   if (header[0] !== TYPES.TOC) return null
   var TOC = readTOC(buf, 16, header[1] - 8)
@@ -116,7 +114,7 @@ export function isIcns (buf) {
  * @param  {Buffer} buf buffer
  * @returns {[string, number, number][]}
  */
-function getResources (buf) {
+export function getResources (buf) {
   return getTOC(buf) || getData(buf)
 }
 
@@ -126,7 +124,7 @@ function getResources (buf) {
  * @param  {Buffer} buf buffer
  * @returns {[string, number, number][]}
  */
-function getImages (buf) {
+export function getImages (buf) {
   return getResources(buf).filter(function (resource) {
     switch (resource[0]) {
       case TYPES.TOC:
@@ -142,7 +140,7 @@ function getImages (buf) {
  * @param {Buffer} buf
  * @returns {[string, number, number][]}
  */
-function getModernImages (buf) {
+export function getModernImages (buf) {
   return getImages(buf).filter(function (image) {
     return types[image[0]].modern
   })
@@ -153,7 +151,7 @@ function getModernImages (buf) {
  * @param {Buffer} buf
  * @returns {[string, number, number] | null}
  */
-function getBestModernImage (buf) {
+export function getBestModernImage (buf) {
   /** @type {[string, number, number] | null} */
   var best = null
   var resources = this.getImages(buf)
@@ -186,14 +184,6 @@ function getBestModernImage (buf) {
 //   // }
 //   return TOC
 // }
-
-export { getImages }
-export { getResources }
-export { readResources }
-export { getTOC }
-export { getData }
-export { getModernImages }
-export { getBestModernImage }
 
 /**
  * @param {Buffer} buffer
