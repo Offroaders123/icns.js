@@ -2,43 +2,47 @@
 
 var icns = require('./icns')
 
+class Icon {
+
 /**
  * @param {Buffer} buffer
  */
-function Icon (buffer) {
+constructor(buffer) {
   this.buffer = buffer
 }
 
-Icon.prototype.readResources = function () {
+readResources() {
   return icns.readResources(this.buffer)
 }
 
-Icon.prototype.getTOC = function () {
+getTOC() {
   return icns.getTOC(this.buffer)
 }
 
-// Icon.prototype.getBest = function () {
+// getBest() {
 //   return icns.getBest(this.buffer)
 // }
 
-Icon.prototype.getResources = function () {
+getResources() {
   return icns.getResources(this.buffer)
 }
 
-Icon.prototype.getData = function () {
+getData() {
   return icns.getData(this.buffer)
 }
 
-Icon.prototype.getImages = function () {
+getImages() {
   return icns.getImages(this.buffer)
 }
 
-Icon.prototype.getModernImages = function () {
+getModernImages() {
   return icns.getModernImages(this.buffer)
 }
 
-Icon.prototype.getBestModernImage = function () {
+getBestModernImage() {
   return icns.getBestModernImage(this.buffer)
+}
+
 }
 
 module.exports = Icon
