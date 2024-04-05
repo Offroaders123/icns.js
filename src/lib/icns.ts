@@ -26,10 +26,10 @@ export interface Section {
 }
 
 function parseFoo (buf: Uint8Array, offset: number): Section {
-  const header = readHeader(buf, offset)
+  const [type, length] = readHeader(buf, offset)
   return {
-    type: header[0],
-    length: header[1],
+    type,
+    length,
     offset: offset + 8
   }
 }
@@ -62,23 +62,23 @@ export function getData (buf: Uint8Array): Data[] {
   const result: Data[] = []
   let offset = 8
   while (offset < buf.length) {
-    const header = readHeader(buf, offset)
-    result.push([header[0], offset + 8, header[1]])
-    offset += header[1]
+    const [type, length] = readHeader(buf, offset)
+    result.push([type, offset + 8, length])
+    offset += length
   }
   return result
 }
 
 export function getTOC (buf: Uint8Array): Data[] | null {
-  const header = readHeader(buf, 8)
-  if (header[0] !== TYPES.TOC) return null
-  const TOC = readTOC(buf, 16, header[1] - 8)
+  const [type, length] = readHeader(buf, 8)
+  if (type !== TYPES.TOC) return null
+  const TOC = readTOC(buf, 16, length - 8)
   // calculate offset for each resource
-  let p = 16 + header[1]
-  return TOC.map(function (resource) {
+  let p = 16 + length
+  return TOC.map(function ([type, length]){
     // type, offset, length
-    const t: Data = [resource[0], p, resource[1]]
-    p += resource[1]
+    const t: Data = [type, p, length]
+    p += length
     return t
   })
 }
@@ -101,8 +101,8 @@ export function getResources (buf: Uint8Array): Data[] {
  * list of resources with TOC and icnV resources filtered.
  */
 export function getImages (buf: Uint8Array): Data[] {
-  return getResources(buf).filter(function (resource) {
-    switch (resource[0]) {
+  return getResources(buf).filter(function ([type]) {
+    switch (type) {
       case TYPES.TOC:
       case TYPES.ICNV:
         return false
@@ -113,8 +113,8 @@ export function getImages (buf: Uint8Array): Data[] {
 }
 
 export function getModernImages (buf: Uint8Array): Data[] {
-  return getImages(buf).filter(function (image) {
-    return types[image[0]].modern
+  return getImages(buf).filter(function ([type]) {
+    return types[type].modern
   })
 }
 
@@ -164,10 +164,10 @@ export interface Result {
 
 export function parse (buffer: Uint8Array): Result {
   const result = {} as Result
-  const header = readHeader(buffer, 0)
+  const [type, length] = readHeader(buffer, 0)
 
-  result.icns = header[0] === MAGIC
-  result.length = header[1]
+  result.icns = type === MAGIC
+  result.length = length
 
   result.data = readData(buffer)
   result.data.forEach(function (data) {
