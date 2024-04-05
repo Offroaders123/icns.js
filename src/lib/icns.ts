@@ -75,7 +75,7 @@ export function getTOC (buf: Uint8Array): Data[] | null {
   const TOC = readTOC(buf, 16, length - 8)
   // calculate offset for each resource
   let p = 16 + length
-  return TOC.map(function ([type, length]){
+  return TOC.map(([type, length]) => {
     // type, offset, length
     const t: Data = [type, p, length]
     p += length
@@ -101,7 +101,7 @@ export function getResources (buf: Uint8Array): Data[] {
  * list of resources with TOC and icnV resources filtered.
  */
 export function getImages (buf: Uint8Array): Data[] {
-  return getResources(buf).filter(function ([type]) {
+  return getResources(buf).filter(([type]): boolean => {
     switch (type) {
       case TYPES.TOC:
       case TYPES.ICNV:
@@ -113,20 +113,19 @@ export function getImages (buf: Uint8Array): Data[] {
 }
 
 export function getModernImages (buf: Uint8Array): Data[] {
-  return getImages(buf).filter(function ([type]) {
-    return types[type].modern
-  })
+  return getImages(buf)
+    .filter(([type]): boolean => types[type].modern === true)
 }
 
 export function getBestModernImage (buf: Uint8Array): Data | null {
   let best: Data | null = null
   const resources = getImages(buf)
-  resources.forEach(function (resource) {
+  for (const resource of resources){
     const type = types[resource[0]]
-    if (!type.modern) return
+    if (!type.modern) continue
     if (!best) best = resource
     else if (type.size > types[best[0]].size) best = resource
-  })
+  }
   return best
 }
 
@@ -170,10 +169,10 @@ export function parse (buffer: Uint8Array): Result {
   result.length = length
 
   result.data = readData(buffer)
-  result.data.forEach(function (data) {
+  for (const data of result.data){
     if (data.type === 'TOC ') {
       data.value = readTOC(buffer, data.offset, data.length)
     }
-  })
+  }
   return result
 }
