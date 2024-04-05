@@ -19,7 +19,13 @@ var MAGIC = 'icns'
 //   return {type: type, length: length}
 // }
 
-function parseFoo (buf: Uint8Array, offset: number): { type: string; length: number; offset: number } {
+export interface Section {
+  type: string;
+  length: number;
+  offset: number;
+}
+
+function parseFoo (buf: Uint8Array, offset: number): Section {
   var header = readHeader(buf, offset)
   return {
     type: header[0],
@@ -28,8 +34,8 @@ function parseFoo (buf: Uint8Array, offset: number): { type: string; length: num
   }
 }
 
-function readData (buf: Uint8Array): { type: string; length: number; offset: number }[] {
-  var result: { type: string; length: number; offset: number }[] = []
+function readData (buf: Uint8Array): Section[] {
+  var result: Section[] = []
   var offset = 8
   while (offset < buf.length) {
     var icon = parseFoo(buf, offset)
@@ -39,8 +45,8 @@ function readData (buf: Uint8Array): { type: string; length: number; offset: num
   return result
 }
 
-export function readResources (buf: Uint8Array): { type: string; length: number; offset: number }[] {
-  var result: { type: string; length: number; offset: number }[] = []
+export function readResources (buf: Uint8Array): Section[] {
+  var result: Section[] = []
   var offset = 8
   while (offset < buf.length) {
     var icon = parseFoo(buf, offset)
@@ -50,8 +56,10 @@ export function readResources (buf: Uint8Array): { type: string; length: number;
   return result
 }
 
-export function getData (buf: Uint8Array): [string, number, number][] {
-  var result: [string, number, number][] = []
+export type Data = [type: string, offset: number, length: number];
+
+export function getData (buf: Uint8Array): Data[] {
+  var result: Data[] = []
   var offset = 8
   while (offset < buf.length) {
     var header = readHeader(buf, offset)
@@ -61,7 +69,7 @@ export function getData (buf: Uint8Array): [string, number, number][] {
   return result
 }
 
-export function getTOC (buf: Uint8Array): [string, number, number][] | null {
+export function getTOC (buf: Uint8Array): Data[] | null {
   var header = readHeader(buf, 8)
   if (header[0] !== TYPES.TOC) return null
   var TOC = readTOC(buf, 16, header[1] - 8)
@@ -69,7 +77,7 @@ export function getTOC (buf: Uint8Array): [string, number, number][] | null {
   var p = 16 + header[1]
   return TOC.map(function (resource) {
     // type, offset, length
-    var t: [string, number, number] = [resource[0], p, resource[1]]
+    var t: Data = [resource[0], p, resource[1]]
     p += resource[1]
     return t
   })
@@ -84,7 +92,7 @@ export function isIcns (buf: Uint8Array): boolean {
  * Use the table of content if available,
  * reads and parse the all buffer otherwise
  */
-export function getResources (buf: Uint8Array): [string, number, number][] {
+export function getResources (buf: Uint8Array): Data[] {
   return getTOC(buf) || getData(buf)
 }
 
@@ -92,7 +100,7 @@ export function getResources (buf: Uint8Array): [string, number, number][] {
  * Returns the list of images within the icon, that is the
  * list of resources with TOC and icnV resources filtered.
  */
-export function getImages (buf: Uint8Array): [string, number, number][] {
+export function getImages (buf: Uint8Array): Data[] {
   return getResources(buf).filter(function (resource) {
     switch (resource[0]) {
       case TYPES.TOC:
@@ -104,14 +112,14 @@ export function getImages (buf: Uint8Array): [string, number, number][] {
   })
 }
 
-export function getModernImages (buf: Uint8Array): [string, number, number][] {
+export function getModernImages (buf: Uint8Array): Data[] {
   return getImages(buf).filter(function (image) {
     return types[image[0]].modern
   })
 }
 
-export function getBestModernImage (buf: Uint8Array): [string, number, number] | null {
-  var best: [string, number, number] | null = null
+export function getBestModernImage (buf: Uint8Array): Data | null {
+  var best: Data | null = null
   var resources = getImages(buf)
   resources.forEach(function (resource) {
     var type = types[resource[0]]
@@ -143,8 +151,19 @@ export function getBestModernImage (buf: Uint8Array): [string, number, number] |
 //   return TOC
 // }
 
-export function parse (buffer: Uint8Array): { icns: boolean; length: number; data: { type: string; length: number; offset: number; value?: [string, number][] }[] } {
-  var result = {} as { icns: boolean; length: number; data: { type: string; length: number; offset: number; value?: [string, number][] }[] }
+export interface Result {
+  icns: boolean;
+  length: number;
+  data: {
+    type: string;
+    length: number;
+    offset: number;
+    value?: [string, number][];
+  }[];
+}
+
+export function parse (buffer: Uint8Array): Result {
+  var result = {} as Result
   var header = readHeader(buffer, 0)
 
   result.icns = header[0] === MAGIC

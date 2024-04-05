@@ -1,6 +1,8 @@
 const textDecoder = new TextDecoder();
 
-export function readHeader (buf: Uint8Array, offset: number): [string, number] {
+export type Header = [type: string, length: number];
+
+export function readHeader (buf: Uint8Array, offset: number): Header {
   const view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
   return [
     // type
@@ -10,10 +12,10 @@ export function readHeader (buf: Uint8Array, offset: number): [string, number] {
   ]
 }
 
-export function readTOC (buffer: Uint8Array, offset: number, length: number): [string, number][] {
+export function readTOC (buffer: Uint8Array, offset: number, length: number): Header[] {
   buffer = buffer.subarray(offset)
   offset = 0
-  var result: [string, number][] = []
+  var result: Header[] = []
   while (offset < length) {
     result.push(readHeader(buffer, offset))
     offset += 8
