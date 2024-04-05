@@ -19,12 +19,7 @@ var MAGIC = 'icns'
 //   return {type: type, length: length}
 // }
 
-/**
- * @param {Buffer} buf
- * @param {number} offset
- * @returns {{ type: string; length: number; offset: number; }}
- */
-function parseFoo (buf, offset) {
+function parseFoo (buf: Buffer, offset: number): { type: string; length: number; offset: number } {
   var header = readHeader(buf, offset)
   return {
     type: header[0],
@@ -33,13 +28,8 @@ function parseFoo (buf, offset) {
   }
 }
 
-/**
- * @param {Buffer} buf
- * @returns {{ type: string; length: number; offset: number; }[]}
- */
-function readData (buf) {
-  /** @type {{ type: string; length: number; offset: number; }[]} */
-  var result = []
+function readData (buf: Buffer): { type: string; length: number; offset: number }[] {
+  var result: { type: string; length: number; offset: number }[] = []
   var offset = 8
   while (offset < buf.length) {
     var icon = parseFoo(buf, offset)
@@ -49,12 +39,8 @@ function readData (buf) {
   return result
 }
 
-/**
- * @param {Buffer} buf
- * @returns {{ type: string; length: number; offset: number; }[]}
- */
-export function readResources (buf) {
-  var result = []
+export function readResources (buf: Buffer): { type: string; length: number; offset: number }[] {
+  var result: { type: string; length: number; offset: number }[] = []
   var offset = 8
   while (offset < buf.length) {
     var icon = parseFoo(buf, offset)
@@ -64,13 +50,8 @@ export function readResources (buf) {
   return result
 }
 
-/**
- * @param {Buffer} buf
- * @returns {[string, number, number][]}
- */
-export function getData (buf) {
-  /** @type {[string, number, number][]} */
-  var result = []
+export function getData (buf: Buffer): [string, number, number][] {
+  var result: [string, number, number][] = []
   var offset = 8
   while (offset < buf.length) {
     var header = readHeader(buf, offset)
@@ -80,11 +61,7 @@ export function getData (buf) {
   return result
 }
 
-/**
- * @param {Buffer} buf
- * @returns {[string, number, number][] | null}
- */
-export function getTOC (buf) {
+export function getTOC (buf: Buffer): [string, number, number][] | null {
   var header = readHeader(buf, 8)
   if (header[0] !== TYPES.TOC) return null
   var TOC = readTOC(buf, 16, header[1] - 8)
@@ -92,18 +69,13 @@ export function getTOC (buf) {
   var p = 16 + header[1]
   return TOC.map(function (resource) {
     // type, offset, length
-    /** @type {[string, number, number]} */
-    var t = [resource[0], p, resource[1]]
+    var t: [string, number, number] = [resource[0], p, resource[1]]
     p += resource[1]
     return t
   })
 }
 
-/**
- * @param {Buffer} buf
- * @returns {boolean}
- */
-export function isIcns (buf) {
+export function isIcns (buf: Buffer): boolean {
   return readHeader(buf, 0)[0] === MAGIC
 }
 
@@ -111,20 +83,16 @@ export function isIcns (buf) {
  * Returns the list of resources within the icon.
  * Use the table of content if available,
  * reads and parse the all buffer otherwise
- * @param  {Buffer} buf buffer
- * @returns {[string, number, number][]}
  */
-export function getResources (buf) {
+export function getResources (buf: Buffer): [string, number, number][] {
   return getTOC(buf) || getData(buf)
 }
 
 /**
  * Returns the list of images within the icon, that is the
  * list of resources with TOC and icnV resources filtered.
- * @param  {Buffer} buf buffer
- * @returns {[string, number, number][]}
  */
-export function getImages (buf) {
+export function getImages (buf: Buffer): [string, number, number][] {
   return getResources(buf).filter(function (resource) {
     switch (resource[0]) {
       case TYPES.TOC:
@@ -136,23 +104,14 @@ export function getImages (buf) {
   })
 }
 
-/**
- * @param {Buffer} buf
- * @returns {[string, number, number][]}
- */
-export function getModernImages (buf) {
+export function getModernImages (buf: Buffer): [string, number, number][] {
   return getImages(buf).filter(function (image) {
     return types[image[0]].modern
   })
 }
 
-/**
- * @param {Buffer} buf
- * @returns {[string, number, number] | null}
- */
-export function getBestModernImage (buf) {
-  /** @type {[string, number, number] | null} */
-  var best = null
+export function getBestModernImage (buf: Buffer): [string, number, number] | null {
+  var best: [string, number, number] | null = null
   var resources = getImages(buf)
   resources.forEach(function (resource) {
     var type = types[resource[0]]
@@ -167,11 +126,11 @@ export function getBestModernImage (buf) {
 //
 // }
 
-/**
- * Returns the data as a buffer for the passed resource array argument
- * @param {{ type: string; length: number; offset: number; }[]} resource array
- * @returns {Buffer} the data
- */
+// /**
+//  * Returns the data as a buffer for the passed resource array argument
+//  * @param {{ type: string; length: number; offset: number; }[]} resource array
+//  * @returns {Buffer} the data
+//  */
 // function getData() {
 //
 // }
@@ -184,13 +143,8 @@ export function getBestModernImage (buf) {
 //   return TOC
 // }
 
-/**
- * @param {Buffer} buffer
- * @returns {{ icns: boolean; length: number; data: { type: string; length: number; offset: number; value?: [string, number][]; }[]; }}
- */
-export function parse (buffer) {
-  /** @type {{ icns: boolean; length: number; data: { type: string; length: number; offset: number; value?: [string, number][]; }[]; }} */
-  var result = {}
+export function parse (buffer: Buffer): { icns: boolean; length: number; data: { type: string; length: number; offset: number; value?: [string, number][] }[] } {
+  var result = {} as { icns: boolean; length: number; data: { type: string; length: number; offset: number; value?: [string, number][] }[] }
   var header = readHeader(buffer, 0)
 
   result.icns = header[0] === MAGIC

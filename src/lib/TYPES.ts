@@ -1,7 +1,6 @@
 import types from './types.json.js'
 
-/** @type {Record<string, string>} */
-const TYPES = Object.fromEntries(
+const TYPES: Record<string, string> = Object.fromEntries(
   Object.keys(types)
     .map(type => [type.toUpperCase(), type])
 )

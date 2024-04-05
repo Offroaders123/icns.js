@@ -1,8 +1,11 @@
-/**
- * @typedef {{ length: number; size: number; OS: string; modern?: true; description: string; }} IcnsType
- */
+export interface IcnsType {
+  length: number;
+  size: number;
+  OS: string;
+  modern?: true;
+  description: string;
+}
 
-/** @type {Record<string, IcnsType>} */
 export default {
   "ICON": {
     "length": 128,
@@ -207,4 +210,4 @@ export default {
     "modern": true,
     "description": "256x256@2x \"retina\" icon in JPEG 2000 or PNG format"
   }
-}
+} as Record<string, IcnsType>

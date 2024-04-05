@@ -1,9 +1,4 @@
-/**
- * @param {Buffer} buf
- * @param {number} offset
- * @returns {[string, number]}
- */
-export function readHeader (buf, offset) {
+export function readHeader (buf: Buffer, offset: number): [string, number] {
   return [
     // type
     buf.toString('ascii', offset, offset + 4),
@@ -12,17 +7,10 @@ export function readHeader (buf, offset) {
   ]
 }
 
-/**
- * @param {Buffer} buffer
- * @param {number} offset
- * @param {number} length
- * @returns {[string, number][]}
- */
-export function readTOC (buffer, offset, length) {
+export function readTOC (buffer: Buffer, offset: number, length: number): [string, number][] {
   buffer = buffer.slice(offset)
   offset = 0
-  /** @type {[string, number][]} */
-  var result = []
+  var result: [string, number][] = []
   while (offset < length) {
     result.push(readHeader(buffer, offset))
     offset += 8
