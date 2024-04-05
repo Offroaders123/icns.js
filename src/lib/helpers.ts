@@ -1,14 +1,17 @@
-export function readHeader (buf: Buffer, offset: number): [string, number] {
+const textDecoder = new TextDecoder();
+
+export function readHeader (buf: Uint8Array, offset: number): [string, number] {
+  const view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
   return [
     // type
-    buf.toString('ascii', offset, offset + 4),
+    textDecoder.decode(buf.subarray(offset, offset + 4)),
     // length
-    buf.readUInt32BE(offset + 4)
+    view.getUint32(offset + 4)
   ]
 }
 
-export function readTOC (buffer: Buffer, offset: number, length: number): [string, number][] {
-  buffer = buffer.slice(offset)
+export function readTOC (buffer: Uint8Array, offset: number, length: number): [string, number][] {
+  buffer = buffer.subarray(offset)
   offset = 0
   var result: [string, number][] = []
   while (offset < length) {

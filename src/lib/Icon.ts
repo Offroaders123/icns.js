@@ -2,7 +2,7 @@ import * as icns from './icns.js'
 
 export default class Icon {
 
-constructor(public buffer: Buffer) {}
+constructor(public buffer: Uint8Array) {}
 
 readResources() {
   return icns.readResources(this.buffer)
