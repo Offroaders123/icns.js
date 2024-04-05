@@ -2,7 +2,7 @@
   "name": "icns",
   "version": "0.1.0",
   "description": "Apple Icon Image format (icns) for JavaScript",
-  "type": "commonjs",
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": "./dist/bin/icns.js",
