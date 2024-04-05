@@ -15,7 +15,7 @@ export function readHeader (buf: Uint8Array, offset: number): Header {
 export function readTOC (buffer: Uint8Array, offset: number, length: number): Header[] {
   buffer = buffer.subarray(offset)
   offset = 0
-  var result: Header[] = []
+  const result: Header[] = []
   while (offset < length) {
     result.push(readHeader(buffer, offset))
     offset += 8

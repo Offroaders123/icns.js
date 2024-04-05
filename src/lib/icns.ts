@@ -8,12 +8,12 @@ import TYPES from './TYPES.js'
 import types from './types.json.js'
 import { readHeader, readTOC } from './helpers.js'
 
-var MAGIC = 'icns'
+const MAGIC = 'icns'
 
 // function parseIcon (buf, offset) {
-//   var icon = buf.slice(offset)
-//   var length = buf.readUInt32BE(4)
-//   var type = ''
+//   const icon = buf.slice(offset)
+//   const length = buf.readUInt32BE(4)
+//   const type = ''
 //   if (icon.toString('hex', 0, 8) === '89504e470d0a1a0a') type = 'png'
 //   else if (icon.toString('hex', 0, 3) === 'ffd8ff') type = 'jpeg'
 //   return {type: type, length: length}
@@ -26,7 +26,7 @@ export interface Section {
 }
 
 function parseFoo (buf: Uint8Array, offset: number): Section {
-  var header = readHeader(buf, offset)
+  const header = readHeader(buf, offset)
   return {
     type: header[0],
     length: header[1],
@@ -35,10 +35,10 @@ function parseFoo (buf: Uint8Array, offset: number): Section {
 }
 
 function readData (buf: Uint8Array): Section[] {
-  var result: Section[] = []
-  var offset = 8
+  const result: Section[] = []
+  let offset = 8
   while (offset < buf.length) {
-    var icon = parseFoo(buf, offset)
+    const icon = parseFoo(buf, offset)
     offset += icon.length
     result.push(icon)
   }
@@ -46,10 +46,10 @@ function readData (buf: Uint8Array): Section[] {
 }
 
 export function readResources (buf: Uint8Array): Section[] {
-  var result: Section[] = []
-  var offset = 8
+  const result: Section[] = []
+  let offset = 8
   while (offset < buf.length) {
-    var icon = parseFoo(buf, offset)
+    const icon = parseFoo(buf, offset)
     offset += icon.length
     result.push(icon)
   }
@@ -59,10 +59,10 @@ export function readResources (buf: Uint8Array): Section[] {
 export type Data = [type: string, offset: number, length: number];
 
 export function getData (buf: Uint8Array): Data[] {
-  var result: Data[] = []
-  var offset = 8
+  const result: Data[] = []
+  let offset = 8
   while (offset < buf.length) {
-    var header = readHeader(buf, offset)
+    const header = readHeader(buf, offset)
     result.push([header[0], offset + 8, header[1]])
     offset += header[1]
   }
@@ -70,14 +70,14 @@ export function getData (buf: Uint8Array): Data[] {
 }
 
 export function getTOC (buf: Uint8Array): Data[] | null {
-  var header = readHeader(buf, 8)
+  const header = readHeader(buf, 8)
   if (header[0] !== TYPES.TOC) return null
-  var TOC = readTOC(buf, 16, header[1] - 8)
+  const TOC = readTOC(buf, 16, header[1] - 8)
   // calculate offset for each resource
-  var p = 16 + header[1]
+  let p = 16 + header[1]
   return TOC.map(function (resource) {
     // type, offset, length
-    var t: Data = [resource[0], p, resource[1]]
+    const t: Data = [resource[0], p, resource[1]]
     p += resource[1]
     return t
   })
@@ -119,10 +119,10 @@ export function getModernImages (buf: Uint8Array): Data[] {
 }
 
 export function getBestModernImage (buf: Uint8Array): Data | null {
-  var best: Data | null = null
-  var resources = getImages(buf)
+  let best: Data | null = null
+  const resources = getImages(buf)
   resources.forEach(function (resource) {
-    var type = types[resource[0]]
+    const type = types[resource[0]]
     if (!type.modern) return
     if (!best) best = resource
     else if (type.size > types[best[0]].size) best = resource
@@ -143,8 +143,8 @@ export function getBestModernImage (buf: Uint8Array): Data | null {
 //
 // }
 // export function getBest (buf) {
-//   // var TOC = getTOC(buf) || readResources(buf)
-//   var TOC = readResources(buf)
+//   // const TOC = getTOC(buf) || readResources(buf)
+//   const TOC = readResources(buf)
 //   // if (!TOC) {
 //
 //   // }
@@ -163,8 +163,8 @@ export interface Result {
 }
 
 export function parse (buffer: Uint8Array): Result {
-  var result = {} as Result
-  var header = readHeader(buffer, 0)
+  const result = {} as Result
+  const header = readHeader(buffer, 0)
 
   result.icns = header[0] === MAGIC
   result.length = header[1]
